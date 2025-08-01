@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark background color matching our Flutter app theme -->
+    <color name="dark_background">#FF121212</color>
+    <!-- Alternative darker color for true black theme -->
+    <color name="true_black">#FF000000</color>
+    <!-- Deep purple accent color matching our Flutter theme -->
+    <color name="deep_purple">#FF673AB7</color>
+</resources>

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
+<!-- Launch splash screen for Android API 21+ with dark background -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="?android:colorBackground" />
+    <!-- Dark background to prevent white flash -->
+    <item android:drawable="@color/dark_background" />
 
-    <!-- You can insert your own image assets here -->
+    <!-- Optional: Add a subtle app icon or logo here -->
+    <!-- Uncomment and customize as needed -->
     <!-- <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
+            android:src="@mipmap/ic_launcher" />
     </item> -->
 </layer-list>

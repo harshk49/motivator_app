@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
+<!-- Launch splash screen with dark background to match app theme -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+    <!-- Dark background to prevent white flash -->
+    <item android:drawable="@color/dark_background" />
 
-    <!-- You can insert your own image assets here -->
+    <!-- Optional: Add a subtle app icon or logo here -->
+    <!-- Uncomment and customize as needed -->
     <!-- <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
+            android:src="@mipmap/ic_launcher" />
+    </item> -->
+    
+    <!-- Optional: Add motivational text or app name -->
+    <!-- <item android:gravity="center">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
     </item> -->
 </layer-list>
