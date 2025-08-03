@@ -23,6 +23,35 @@ class QuoteCard extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
+    final isLargeScreen = screenSize.width > 900;
+
+    // Responsive font sizes based on screen size
+    final quoteFontSize = isLargeScreen 
+        ? 32.0 
+        : isTablet 
+            ? 28.0 
+            : screenSize.width < 350 
+                ? 22.0 
+                : 26.0;
+                
+    final authorFontSize = isLargeScreen 
+        ? 20.0 
+        : isTablet 
+            ? 18.0 
+            : 16.0;
+
+    // Responsive padding based on screen size
+    final horizontalPadding = isLargeScreen 
+        ? screenSize.width * 0.15 
+        : isTablet 
+            ? AppTheme.spacingXxl 
+            : AppTheme.spacingLg;
+    
+    final verticalPadding = isTablet 
+        ? AppTheme.spacingXxl * 1.5 
+        : AppTheme.spacingXl;
 
     return AnimatedOpacity(
       opacity: opacity,
@@ -31,11 +60,14 @@ class QuoteCard extends StatelessWidget {
               (AppTheme.quoteAnimation.inMilliseconds * (1.0 - opacity))
                   .round()),
       child: Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingXl,
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
         ),
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        padding: EdgeInsets.all(
+          isTablet ? AppTheme.spacingXxl : AppTheme.spacingXl,
+        ),
         decoration: BoxDecoration(
           // Enhanced card background with better visual hierarchy
           color: colorScheme.surface.withOpacity(0.15),
@@ -65,46 +97,49 @@ class QuoteCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Opening quote mark with enhanced styling
+            // Opening quote mark with responsive sizing
             Icon(
               Icons.format_quote,
-              size: 36,
+              size: isTablet ? 48 : 36,
               color: colorScheme.primary.withOpacity(0.8),
             ),
 
-            const SizedBox(height: AppTheme.spacingLg),
+            SizedBox(height: isTablet ? AppTheme.spacingXl : AppTheme.spacingLg),
 
-            // Main quote text with enhanced centering and typography
+            // Main quote text with responsive typography and enhanced readability
             Text(
               quote.text,
               style: textTheme.headlineMedium?.copyWith(
                 color: colorScheme.onSurface,
-                height: 1.5,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
+                fontSize: quoteFontSize,
+                height: 1.4, // Improved line height for better readability
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
               ),
               textAlign: TextAlign.center,
               maxLines: null,
             ),
 
-            const SizedBox(height: AppTheme.spacingXl),
+            SizedBox(height: isTablet ? AppTheme.spacingXxl : AppTheme.spacingXl),
 
-            // Author attribution with enhanced styling
+            // Author attribution with responsive styling
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd,
-                vertical: AppTheme.spacingSm,
+              padding: EdgeInsets.symmetric(
+                horizontal: isTablet ? AppTheme.spacingLg : AppTheme.spacingMd,
+                vertical: isTablet ? AppTheme.spacingMd : AppTheme.spacingSm,
               ),
               decoration: BoxDecoration(
                 color: colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
               ),
               child: Text(
                 '— ${quote.author}',
                 style: textTheme.bodyLarge?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.8),
+                  fontSize: authorFontSize,
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
                 ),
                 textAlign: TextAlign.center,
               ),

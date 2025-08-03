@@ -98,24 +98,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       // Full-screen dark background
       backgroundColor: colorScheme.surface,
-      body: SafeArea(
-        child: GestureDetector(
-          // Tap anywhere to refresh quote
-          onTap: _isLoading ? null : _handleTapToRefresh,
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              // Subtle gradient background for depth
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  colorScheme.surface,
-                  colorScheme.surface.withOpacity(0.8),
-                ],
-              ),
-            ),
+      // Remove system UI overlays for truly full-screen experience
+      extendBodyBehindAppBar: true,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          // Enhanced gradient background for depth and visual appeal
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colorScheme.surface,
+              colorScheme.surface.withOpacity(0.9),
+              colorScheme.surface.withOpacity(0.95),
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: GestureDetector(
+            // Tap anywhere to refresh quote
+            onTap: _isLoading ? null : _handleTapToRefresh,
             child: _buildContent(),
           ),
         ),
