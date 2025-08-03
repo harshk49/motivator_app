@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/quote.dart';
+import '../theme/app_theme.dart';
 
 /// A beautifully styled card widget that displays a motivational quote
 /// Features elegant typography, proper spacing, and smooth animations
@@ -25,14 +26,20 @@ class QuoteCard extends StatelessWidget {
 
     return AnimatedOpacity(
       opacity: opacity,
-      duration: const Duration(milliseconds: 600),
+      duration: Duration(
+          milliseconds:
+              (AppTheme.quoteAnimation.inMilliseconds * (1.0 - opacity))
+                  .round()),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-        padding: const EdgeInsets.all(32),
+        margin: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingLg,
+          vertical: AppTheme.spacingXl,
+        ),
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
         decoration: BoxDecoration(
           // Subtle card background with rounded corners
           color: colorScheme.surface.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           border: Border.all(
             color: colorScheme.outline.withOpacity(0.2),
             width: 1,
@@ -56,7 +63,7 @@ class QuoteCard extends StatelessWidget {
               color: colorScheme.primary.withOpacity(0.7),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.spacingLg),
 
             // Main quote text
             Text(
@@ -69,11 +76,14 @@ class QuoteCard extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AppTheme.spacingXl),
 
             // Author attribution
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd,
+                vertical: AppTheme.spacingSm,
+              ),
               decoration: BoxDecoration(
                 color: colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
