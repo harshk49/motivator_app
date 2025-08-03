@@ -37,48 +37,59 @@ class QuoteCard extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(AppTheme.spacingXl),
         decoration: BoxDecoration(
-          // Subtle card background with rounded corners
-          color: colorScheme.surface.withOpacity(0.1),
+          // Enhanced card background with better visual hierarchy
+          color: colorScheme.surface.withOpacity(0.15),
           borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           border: Border.all(
-            color: colorScheme.outline.withOpacity(0.2),
-            width: 1,
+            color: colorScheme.outline.withOpacity(0.3),
+            width: 1.5,
           ),
-          // Soft shadow for depth
+          // Enhanced shadow for better depth and centering emphasis
           boxShadow: [
             BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 15,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
+            ),
+            BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
+              blurRadius: 30,
+              spreadRadius: 0,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Opening quote mark
+            // Opening quote mark with enhanced styling
             Icon(
               Icons.format_quote,
-              size: 32,
-              color: colorScheme.primary.withOpacity(0.7),
+              size: 36,
+              color: colorScheme.primary.withOpacity(0.8),
             ),
 
             const SizedBox(height: AppTheme.spacingLg),
 
-            // Main quote text
+            // Main quote text with enhanced centering and typography
             Text(
               quote.text,
               style: textTheme.headlineMedium?.copyWith(
                 color: colorScheme.onSurface,
-                height: 1.4,
-                fontWeight: FontWeight.w600,
+                height: 1.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
               ),
               textAlign: TextAlign.center,
+              maxLines: null,
             ),
 
             const SizedBox(height: AppTheme.spacingXl),
 
-            // Author attribution
+            // Author attribution with enhanced styling
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingMd,
