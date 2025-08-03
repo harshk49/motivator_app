@@ -28,30 +28,29 @@ class QuoteCard extends StatelessWidget {
     final isLargeScreen = screenSize.width > 900;
 
     // Responsive font sizes based on screen size
-    final quoteFontSize = isLargeScreen 
-        ? 32.0 
-        : isTablet 
-            ? 28.0 
-            : screenSize.width < 350 
-                ? 22.0 
+    final quoteFontSize = isLargeScreen
+        ? 32.0
+        : isTablet
+            ? 28.0
+            : screenSize.width < 350
+                ? 22.0
                 : 26.0;
-                
-    final authorFontSize = isLargeScreen 
-        ? 20.0 
-        : isTablet 
-            ? 18.0 
+
+    final authorFontSize = isLargeScreen
+        ? 20.0
+        : isTablet
+            ? 18.0
             : 16.0;
 
     // Responsive padding based on screen size
-    final horizontalPadding = isLargeScreen 
-        ? screenSize.width * 0.15 
-        : isTablet 
-            ? AppTheme.spacingXxl 
+    final horizontalPadding = isLargeScreen
+        ? screenSize.width * 0.15
+        : isTablet
+            ? AppTheme.spacingXxl
             : AppTheme.spacingLg;
-    
-    final verticalPadding = isTablet 
-        ? AppTheme.spacingXxl * 1.5 
-        : AppTheme.spacingXl;
+
+    final verticalPadding =
+        isTablet ? AppTheme.spacingXxl * 1.5 : AppTheme.spacingXl;
 
     return AnimatedOpacity(
       opacity: opacity,
@@ -104,7 +103,8 @@ class QuoteCard extends StatelessWidget {
               color: colorScheme.primary.withOpacity(0.8),
             ),
 
-            SizedBox(height: isTablet ? AppTheme.spacingXl : AppTheme.spacingLg),
+            SizedBox(
+                height: isTablet ? AppTheme.spacingXl : AppTheme.spacingLg),
 
             // Main quote text with responsive typography and enhanced readability
             Text(
@@ -120,7 +120,8 @@ class QuoteCard extends StatelessWidget {
               maxLines: null,
             ),
 
-            SizedBox(height: isTablet ? AppTheme.spacingXxl : AppTheme.spacingXl),
+            SizedBox(
+                height: isTablet ? AppTheme.spacingXxl : AppTheme.spacingXl),
 
             // Author attribution with responsive styling
             Container(

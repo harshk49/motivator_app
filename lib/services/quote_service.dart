@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../models/quote.dart';
 
 /// Service class responsible for loading and managing motivational quotes
-/// Handles loading quotes from assets and providing smart quote selection
+/// Handles loading quotes from assets once at startup and providing smart quote selection
 class QuoteService {
   static const String _quotesAssetPath = 'assets/quotes.json';
 
@@ -18,6 +18,9 @@ class QuoteService {
   /// Keeps track of the last 25% of total quotes to ensure variety
   final List<int> _recentQuoteIndices = [];
 
+  /// Flag to track if quotes have been loaded at startup
+  bool _isInitialized = false;
+
   /// Maximum number of recent quotes to track (25% of total quotes, min 5, max 25)
   int get _maxRecentQuotes {
     if (_quotes == null || _quotes!.isEmpty) return 5;
@@ -25,7 +28,22 @@ class QuoteService {
     return quarterSize.clamp(5, 25);
   }
 
-  /// Loads all quotes from the assets/quotes.json file
+  /// Initializes the service by loading all quotes once at startup
+  /// This should be called during app initialization
+  Future<void> initialize() async {
+    if (_isInitialized) return; // Already initialized
+
+    try {
+      await loadQuotes();
+      _isInitialized = true;
+    } catch (e) {
+      _isInitialized = false;
+      rethrow;
+    }
+  }
+
+  /// Loads all quotes from the assets/quotes.json file into memory
+  /// This is called once during app initialization
   /// Returns a list of Quote objects
   /// Throws an exception if the file cannot be loaded or parsed
   Future<List<Quote>> loadQuotes() async {
@@ -50,18 +68,12 @@ class QuoteService {
     }
   }
 
-  /// Returns a random quote from the loaded quotes with smart selection
-  /// Avoids repeating recently shown quotes to ensure better variety
-  /// Automatically loads quotes if they haven't been loaded yet
-  /// Returns null if no quotes are available
-  Future<Quote?> getRandomQuote() async {
-    // Load quotes if not already cached
-    if (_quotes == null || _quotes!.isEmpty) {
-      await loadQuotes();
-    }
-
-    // Return null if still no quotes available
-    if (_quotes == null || _quotes!.isEmpty) {
+  /// Returns a random quote from the pre-loaded in-memory list
+  /// Uses smart selection to avoid repeating recently shown quotes
+  /// Returns null if quotes haven't been loaded or are unavailable
+  Quote? getRandomQuote() {
+    // Ensure quotes are loaded
+    if (!_isInitialized || _quotes == null || _quotes!.isEmpty) {
       return null;
     }
 
@@ -94,18 +106,23 @@ class QuoteService {
     return _quotes![selectedIndex];
   }
 
+  /// Checks if the service has been initialized and quotes are loaded
+  bool get isInitialized => _isInitialized;
+
   /// Returns the total number of available quotes
   /// Returns 0 if quotes haven't been loaded yet
   int get quoteCount => _quotes?.length ?? 0;
 
   /// Checks if quotes have been loaded
-  bool get hasQuotes => _quotes != null && _quotes!.isNotEmpty;
+  bool get hasQuotes =>
+      _isInitialized && _quotes != null && _quotes!.isNotEmpty;
 
   /// Clears the cached quotes and recent selection history
   /// (useful for testing or refresh scenarios)
   void clearCache() {
     _quotes = null;
     _recentQuoteIndices.clear();
+    _isInitialized = false;
   }
 
   /// Clears only the recent quotes tracking, allowing for fresh variety
