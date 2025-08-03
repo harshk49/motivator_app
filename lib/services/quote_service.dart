@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../models/quote.dart';
 
 /// Service class responsible for loading and managing motivational quotes
-/// Handles loading quotes from assets and providing random quote selection
+/// Handles loading quotes from assets and providing smart quote selection
 class QuoteService {
   static const String _quotesAssetPath = 'assets/quotes.json';
 
@@ -13,6 +13,17 @@ class QuoteService {
 
   /// Random number generator for selecting random quotes
   final Random _random = Random();
+
+  /// List to track recently shown quote indices to avoid immediate repetition
+  /// Keeps track of the last 25% of total quotes to ensure variety
+  final List<int> _recentQuoteIndices = [];
+
+  /// Maximum number of recent quotes to track (25% of total quotes, min 5, max 25)
+  int get _maxRecentQuotes {
+    if (_quotes == null || _quotes!.isEmpty) return 5;
+    final int quarterSize = (_quotes!.length * 0.25).round();
+    return quarterSize.clamp(5, 25);
+  }
 
   /// Loads all quotes from the assets/quotes.json file
   /// Returns a list of Quote objects
@@ -39,7 +50,8 @@ class QuoteService {
     }
   }
 
-  /// Returns a random quote from the loaded quotes
+  /// Returns a random quote from the loaded quotes with smart selection
+  /// Avoids repeating recently shown quotes to ensure better variety
   /// Automatically loads quotes if they haven't been loaded yet
   /// Returns null if no quotes are available
   Future<Quote?> getRandomQuote() async {
@@ -53,9 +65,33 @@ class QuoteService {
       return null;
     }
 
-    // Return a random quote
-    final int randomIndex = _random.nextInt(_quotes!.length);
-    return _quotes![randomIndex];
+    final int totalQuotes = _quotes!.length;
+    int selectedIndex;
+
+    // If we have shown fewer quotes than available, try to avoid recent ones
+    if (_recentQuoteIndices.length < totalQuotes) {
+      int attempts = 0;
+      const int maxAttempts = 10; // Prevent infinite loops
+
+      do {
+        selectedIndex = _random.nextInt(totalQuotes);
+        attempts++;
+      } while (_recentQuoteIndices.contains(selectedIndex) &&
+          attempts < maxAttempts);
+    } else {
+      // If we've shown all quotes recently, just pick any random one
+      selectedIndex = _random.nextInt(totalQuotes);
+    }
+
+    // Add to recent quotes tracking
+    _recentQuoteIndices.add(selectedIndex);
+
+    // Maintain the recent quotes list size
+    if (_recentQuoteIndices.length > _maxRecentQuotes) {
+      _recentQuoteIndices.removeAt(0); // Remove the oldest entry
+    }
+
+    return _quotes![selectedIndex];
   }
 
   /// Returns the total number of available quotes
@@ -65,8 +101,23 @@ class QuoteService {
   /// Checks if quotes have been loaded
   bool get hasQuotes => _quotes != null && _quotes!.isNotEmpty;
 
-  /// Clears the cached quotes (useful for testing or refresh scenarios)
+  /// Clears the cached quotes and recent selection history
+  /// (useful for testing or refresh scenarios)
   void clearCache() {
     _quotes = null;
+    _recentQuoteIndices.clear();
+  }
+
+  /// Clears only the recent quotes tracking, allowing for fresh variety
+  /// without reloading the entire quote database
+  void clearRecentHistory() {
+    _recentQuoteIndices.clear();
+  }
+
+  /// Returns the number of unique quotes remaining before repetition
+  /// (quotes not in recent history)
+  int get remainingUniqueQuotes {
+    if (_quotes == null || _quotes!.isEmpty) return 0;
+    return _quotes!.length - _recentQuoteIndices.length;
   }
 }
