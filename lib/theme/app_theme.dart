@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Central theme configuration for the Motivator App
 /// Provides consistent dark theme styling across the entire application
@@ -93,31 +94,29 @@ class AppTheme {
     );
   }
 
-  /// Builds the custom text theme for optimal quote readability
+  /// Builds the custom text theme for optimal quote readability with Urbanist font
   static TextTheme _buildTextTheme() {
-    return const TextTheme(
+    return GoogleFonts.urbanistTextTheme().copyWith(
       // Large quote text for very long quotes
-      headlineLarge: TextStyle(
+      headlineLarge: GoogleFonts.urbanist(
         fontSize: 36,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.3,
         height: 1.4,
         color: Colors.white,
-        fontFamily: 'serif', // Better readability for long text
       ),
 
       // Medium quote text (main quote display) - optimized for readability
-      headlineMedium: TextStyle(
+      headlineMedium: GoogleFonts.urbanist(
         fontSize: 26,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.3,
         height: 1.4, // Improved line height for better readability
         color: Colors.white,
-        fontFamily: 'serif', // Serif fonts are easier to read for longer text
       ),
 
       // Small headlines
-      headlineSmall: TextStyle(
+      headlineSmall: GoogleFonts.urbanist(
         fontSize: 22,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.2,
@@ -126,7 +125,7 @@ class AppTheme {
       ),
 
       // Author attribution text - optimized for elegance
-      bodyLarge: TextStyle(
+      bodyLarge: GoogleFonts.urbanist(
         fontSize: 18,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.2,
@@ -135,7 +134,7 @@ class AppTheme {
       ),
 
       // Secondary body text
-      bodyMedium: TextStyle(
+      bodyMedium: GoogleFonts.urbanist(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.1,
@@ -144,7 +143,7 @@ class AppTheme {
       ),
 
       // Small body text
-      bodySmall: TextStyle(
+      bodySmall: GoogleFonts.urbanist(
         fontSize: 14,
         fontWeight: FontWeight.w300,
         letterSpacing: 0.1,
@@ -153,7 +152,7 @@ class AppTheme {
       ),
 
       // Labels and buttons
-      labelLarge: TextStyle(
+      labelLarge: GoogleFonts.urbanist(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,

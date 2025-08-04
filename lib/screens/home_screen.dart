@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/quote.dart';
 import '../widgets/quote_card.dart';
 import '../main.dart'; // Import to access global quoteService
@@ -119,15 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      // Full-screen dark background
       backgroundColor: colorScheme.surface,
-      // Remove system UI overlays for truly full-screen experience
       extendBodyBehindAppBar: true,
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          // Enhanced gradient background for depth and visual appeal
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -140,22 +138,268 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: GestureDetector(
-            // Tap anywhere to refresh quote
-            onTap: _isLoading ? null : _handleTapToRefresh,
-            child: _buildContent(),
+          child: Column(
+            children: [
+              // Enhanced header with app title and stats
+              _buildHeader(),
+
+              // Main content area
+              Expanded(
+                child: GestureDetector(
+                  onTap: _isLoading ? null : _handleTapToRefresh,
+                  child: _buildContent(),
+                ),
+              ),
+
+              // Interactive bottom panel with action buttons
+              _buildBottomPanel(),
+            ],
           ),
         ),
       ),
-      // Floating action button for explicit refresh
-      floatingActionButton: _isLoading
-          ? null
-          : FloatingActionButton(
-              onPressed: _handleTapToRefresh,
-              tooltip: 'New Quote',
-              backgroundColor: colorScheme.primary,
-              child: const Icon(Icons.refresh),
+    );
+  }
+
+  /// Builds enhanced header with app branding and stats
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          // App logo/icon
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: const Icon(
+              Icons.psychology,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          // App title and subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Motivator',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                ),
+                Text(
+                  'Daily inspiration for your journey',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      ),
+                ),
+              ],
+            ),
+          ),
+
+          // Quote counter
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              ),
+            ),
+            child: Text(
+              '${quoteService.quoteCount}+ quotes',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds interactive bottom panel with action buttons
+  Widget _buildBottomPanel() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          ),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Instruction text
+          AnimatedOpacity(
+            opacity: _opacity * 0.8,
+            duration: const Duration(milliseconds: 600),
+            child: Text(
+              'Tap the quote for a new one, or use the actions below',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.6),
+                    fontStyle: FontStyle.italic,
+                  ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Action buttons row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Refresh button
+              _buildActionButton(
+                icon: Icons.refresh,
+                label: 'New Quote',
+                onTap: _isLoading ? null : _handleTapToRefresh,
+                isPrimary: true,
+              ),
+
+              // Share button
+              _buildActionButton(
+                icon: Icons.share,
+                label: 'Share',
+                onTap: _currentQuote != null ? _shareQuote : null,
+              ),
+
+              // Copy button
+              _buildActionButton(
+                icon: Icons.copy,
+                label: 'Copy',
+                onTap: _currentQuote != null ? _copyQuote : null,
+              ),
+
+              // Favorite button (placeholder for future enhancement)
+              _buildActionButton(
+                icon: Icons.favorite_outline,
+                label: 'Save',
+                onTap: _currentQuote != null ? _saveQuote : null,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds individual action button
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    VoidCallback? onTap,
+    bool isPrimary = false,
+  }) {
+    final theme = Theme.of(context);
+    final isEnabled = onTap != null;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isPrimary && isEnabled
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surface.withOpacity(isEnabled ? 0.3 : 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isPrimary && isEnabled
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline.withOpacity(isEnabled ? 0.3 : 0.1),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isPrimary && isEnabled
+                  ? Colors.white
+                  : theme.colorScheme.onSurface
+                      .withOpacity(isEnabled ? 0.8 : 0.3),
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isPrimary && isEnabled
+                    ? Colors.white
+                    : theme.colorScheme.onSurface
+                        .withOpacity(isEnabled ? 0.8 : 0.3),
+                fontWeight: isPrimary ? FontWeight.w500 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Shares the current quote
+  void _shareQuote() {
+    if (_currentQuote != null) {
+      // Note: In a real app, you'd use share_plus package
+      // Share.share(text);
+      _showSnackBar('Share functionality would open here');
+    }
+  }
+
+  /// Copies the current quote to clipboard
+  void _copyQuote() {
+    if (_currentQuote != null) {
+      final text = '"${_currentQuote!.text}"\n\n— ${_currentQuote!.author}';
+      Clipboard.setData(ClipboardData(text: text));
+      _showSnackBar('Quote copied to clipboard!');
+    }
+  }
+
+  /// Saves the current quote (placeholder)
+  void _saveQuote() {
+    if (_currentQuote != null) {
+      // In a real app, you'd save to local storage or favorites
+      _showSnackBar('Quote saved to favorites!');
+    }
+  }
+
+  /// Shows a snackbar message
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
     );
   }
 
@@ -240,38 +484,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Main quote display state
   Widget _buildQuoteState() {
-    return Stack(
-      children: [
-        // Main quote content
-        Center(
-          child: SingleChildScrollView(
-            child: QuoteCard(
-              quote: _currentQuote!,
-              opacity: _opacity,
-            ),
-          ),
+    return Center(
+      child: SingleChildScrollView(
+        child: QuoteCard(
+          quote: _currentQuote!,
+          opacity: _opacity,
         ),
-
-        // Subtle hint for tap to refresh
-        Positioned(
-          bottom: 100,
-          left: 0,
-          right: 0,
-          child: AnimatedOpacity(
-            opacity: _opacity * 0.6,
-            duration: const Duration(milliseconds: 600),
-            child: const Text(
-              'Tap anywhere for a new quote',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
